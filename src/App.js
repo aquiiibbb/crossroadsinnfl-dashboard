@@ -18,7 +18,7 @@ function DashboardContent({ onLogout }) {
   const fetchFeedback = async () => {
     try {
       console.log("🔄 Fetching feedback data...");
-      const response = await axios.get("https://hollister-inn-backend.onrender.com/feedback");
+      const response = await axios.get("https://crossroadsinnfl-backend.onrender.com/health");
       console.log("📊 Dashboard API Response:", response.data);
 
       const feedbackData = response.data.data || response.data;
@@ -41,7 +41,7 @@ function DashboardContent({ onLogout }) {
   const deleteFeedback = async (id) => {
     if (window.confirm("Are you sure you want to delete this feedback?")) {
       try {
-        await axios.delete(`https://hollister-inn-backend.onrender.com/feedback/${id}`);
+        await axios.delete(`https://crossroadsinnfl-backend.onrender.com/health/${id}`);
         setData(data.filter(item => item._id !== id));
         alert("Feedback deleted successfully!");
       } catch (error) {
