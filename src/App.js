@@ -18,16 +18,29 @@ function DashboardContent({ onLogout }) {
   const fetchFeedback = async () => {
     try {
       console.log("🔄 Fetching feedback data...");
-      const response = await axios.get("https://crossroadsinnfl-backend.onrender.com/health");
+      // Changed from /health to /feedback endpoint
+      const response = await axios.get("https://crossroadsinnfl-backend.onrender.com/feedback");
       console.log("📊 Dashboard API Response:", response.data);
 
-      const feedbackData = response.data.data || response.data;
-      console.log("📋 Processed feedback data:", feedbackData);
+      // Handle different response structures
+      let feedbackData = [];
+      if (Array.isArray(response.data)) {
+        feedbackData = response.data;
+      } else if (response.data.data && Array.isArray(response.data.data)) {
+        feedbackData = response.data.data;
+      } else if (response.data.feedback && Array.isArray(response.data.feedback)) {
+        feedbackData = response.data.feedback;
+      } else {
+        console.warn("⚠️ Unexpected API response structure:", response.data);
+        feedbackData = [];
+      }
 
+      console.log("📋 Processed feedback data:", feedbackData);
       setData(feedbackData);
       setLoading(false);
     } catch (error) {
       console.error("❌ Dashboard API Error:", error);
+      setData([]); // Ensure data is always an array
       setLoading(false);
     }
   };
@@ -41,7 +54,7 @@ function DashboardContent({ onLogout }) {
   const deleteFeedback = async (id) => {
     if (window.confirm("Are you sure you want to delete this feedback?")) {
       try {
-        await axios.delete(`https://crossroadsinnfl-backend.onrender.com/health/${id}`);
+        await axios.delete(`https://crossroadsinnfl-backend.onrender.com/feedback/${id}`);
         setData(data.filter(item => item._id !== id));
         alert("Feedback deleted successfully!");
       } catch (error) {
